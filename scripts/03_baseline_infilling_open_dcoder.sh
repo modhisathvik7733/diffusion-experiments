@@ -34,7 +34,7 @@ for f in HumanEval-SingleLineInfilling HumanEval-MultiLineInfilling HumanEval-Ra
   if [ ! -s "$DATA_DIR/$f.jsonl.gz" ]; then
     echo "    downloading $f.jsonl.gz"
     curl -fsSL -o "$DATA_DIR/$f.jsonl.gz" \
-      "https://raw.githubusercontent.com/openai/human-eval-infilling/main/data/$f.jsonl.gz"
+      "https://raw.githubusercontent.com/openai/human-eval-infilling/master/data/$f.jsonl.gz"
   fi
 done
 ls -la "$DATA_DIR"
