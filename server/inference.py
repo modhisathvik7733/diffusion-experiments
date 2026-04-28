@@ -56,14 +56,21 @@ def infill(
     """Generate the middle text between prefix and suffix.
 
     Returns {completion, tokens, latency_ms, finish_reason}.
+
+    Uses small initial mask count (4) and max_new_tokens=max_tokens as the
+    expansion cap — matches the upstream eval pattern (min_gen_len=4,
+    max_gen_len=64) that produced our 88.67 Pass@1 baseline. Tying initial
+    masks to max_tokens kills DreamOn's variable-length expansion mechanism
+    and produces wrong-length completions.
     """
-    n_mask = max(4, min(int(max_tokens), 128))
-    input_ids, prompt_len = _encode(prefix, suffix, n_mask)
+    initial_masks = 4
+    cap_tokens = max(initial_masks, min(int(max_tokens), 128))
+    input_ids, prompt_len = _encode(prefix, suffix, initial_masks)
 
     torch.cuda.synchronize()
     t = time.perf_counter()
     with torch.no_grad():
-        out = _model.diffusion_generate(input_ids, max_new_tokens=n_mask, **_GEN_KWARGS)
+        out = _model.diffusion_generate(input_ids, max_new_tokens=cap_tokens, **_GEN_KWARGS)
     torch.cuda.synchronize()
     latency_ms = int((time.perf_counter() - t) * 1000)
 
