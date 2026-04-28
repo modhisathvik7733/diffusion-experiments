@@ -43,9 +43,10 @@ MODEL_PATH=${MODEL_PATH:-fredzzp/open-dcoder-0.5B}
 TEMPERATURE=${TEMPERATURE:-0.6}
 STEPS=${STEPS:-64}
 ALG=${ALG:-p2}
-BATCH_SIZE=${BATCH_SIZE:-16}
+BATCH_SIZE=${BATCH_SIZE:-4}
 
 export CUDA_VISIBLE_DEVICES=0
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 cd "$ROOT/Open-dLLM/eval/eval_infill"
 
