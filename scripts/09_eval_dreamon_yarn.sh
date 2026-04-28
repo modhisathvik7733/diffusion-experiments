@@ -15,16 +15,32 @@ mkdir -p "$RUN_DIR"
 
 YARN_FACTOR=${YARN_FACTOR:-4}
 
-# Find DreamOn's cached config.json (HF stores by hash under snapshots/)
-CACHE_BASE="$HOME/.cache/huggingface/hub/models--Dream-org--DreamOn-v0-7B"
-CONFIG=""
-if [ -d "$CACHE_BASE/snapshots" ]; then
-  CONFIG=$(find "$CACHE_BASE/snapshots" -maxdepth 2 -name config.json | head -n 1)
-fi
+# Find DreamOn's cached config.json — ask huggingface_hub for the actual path
+# (your HF_HOME may be /workspace/.hf_home, /root/.cache/..., or elsewhere)
+CONFIG=$(python - <<'PY'
+from huggingface_hub import try_to_load_from_cache
+p = try_to_load_from_cache("Dream-org/DreamOn-v0-7B", "config.json")
+print(p if p else "")
+PY
+)
 if [ -z "$CONFIG" ] || [ ! -f "$CONFIG" ]; then
   echo "ERROR: DreamOn config.json not found in HF cache."
-  echo "Expected under: $CACHE_BASE/snapshots/<hash>/config.json"
-  echo "Run script 04 or 05 first to download the model."
+  echo "huggingface_hub.try_to_load_from_cache returned: '$CONFIG'"
+  echo "Tried searching for the model in HF_HOME=${HF_HOME:-<unset>}"
+  echo ""
+  echo "Diagnostics — checking common cache roots:"
+  for d in \
+    "$HOME/.cache/huggingface/hub" \
+    "/workspace/.hf_home/hub" \
+    "/root/.cache/huggingface/hub" \
+    "${HF_HOME:-/dev/null}/hub"; do
+    if [ -d "$d" ]; then
+      echo "  exists: $d"
+      ls "$d" 2>/dev/null | head -5
+    fi
+  done
+  echo ""
+  echo "Run scripts/04_smoke_dreamon.py or scripts/05_baseline_humaneval_infill_dreamon.sh first to download."
   exit 1
 fi
 echo "==> Found config: $CONFIG"
