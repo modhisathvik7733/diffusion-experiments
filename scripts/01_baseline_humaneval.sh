@@ -9,8 +9,6 @@ RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)_baseline_humaneval"
 RUN_DIR="$EXPDIR/runs/$RUN_ID"
 mkdir -p "$RUN_DIR"
 
-source "$ROOT/.venv/bin/activate"
-
 cd "$ROOT/Open-dLLM/eval/eval_completion"
 
 echo "==> Running upstream eval; logs -> $RUN_DIR/eval.log"
