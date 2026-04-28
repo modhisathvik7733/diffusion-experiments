@@ -9,6 +9,7 @@ bash scripts/01_baseline_humaneval.sh                    # 20-30 min: 0.5B Human
 bash scripts/03_baseline_infilling_open_dcoder.sh        # 15-25 min: 0.5B HumanEval-Infill
 python scripts/04_smoke_dreamon.py                       # 2-3 min: DreamOn 8B smoke
 bash scripts/05_baseline_humaneval_infill_dreamon.sh     # 30-60 min: DreamOn HumanEval-Infill
+python scripts/06_latency_bench_dreamon.py               # 5-10 min: p50/p95/p99 latency
 ```
 
 Outputs land in `runs/<UTC-timestamp>/` (gitignored).
