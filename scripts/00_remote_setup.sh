@@ -22,9 +22,9 @@ PY
 echo "==> Pip toolchain"
 pip install --upgrade pip wheel ninja packaging setuptools
 
-echo "==> Runtime deps (explicit; no torch pins => won't touch image torch)"
+echo "==> Runtime deps (datasets pinned <4.0 for lm_eval; no torch pins)"
 pip install --upgrade \
-  "transformers==4.54.1" accelerate datasets peft hf-transfer \
+  "transformers==4.54.1" accelerate "datasets>=3.0,<4.0" peft hf-transfer \
   "triton>=3.1.0" \
   codetiming hydra-core pandas "pyarrow>=15.0.0" pylatexenc \
   wandb "liger-kernel==0.5.8" \
@@ -34,9 +34,8 @@ echo "==> Open-dLLM editable, --no-deps (skip its flash-attn + conflicting pins)
 cd "$ROOT/Open-dLLM"
 pip install --no-deps -e .
 
-echo "==> Eval harnesses"
+echo "==> lm_eval harness (Phase 1 only needs HumanEval/MBPP — not infilling)"
 pip install -e lm-evaluation-harness
-pip install --no-build-isolation -e human-eval-infilling
 
 echo "==> Final torch sanity check"
 python - <<'PY'
