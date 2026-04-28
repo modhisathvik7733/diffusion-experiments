@@ -16,15 +16,14 @@ print("torch", torch.__version__, "device", torch.cuda.get_device_name(0),
 PY
 
 echo "==> Upgrade pip toolchain"
-pip install --upgrade pip wheel ninja
+pip install --upgrade pip wheel ninja packaging
 
-echo "==> Install Open-dLLM upstream Python deps"
+echo "==> Install Open-dLLM upstream deps (eval-only subset; dropped dev tools + pyext)"
 pip install \
   "transformers==4.54.1" accelerate datasets peft hf-transfer \
   tensordict torchdata "triton>=3.1.0" \
   codetiming hydra-core pandas "pyarrow>=15.0.0" pylatexenc \
-  wandb "liger-kernel==0.5.8" \
-  pytest yapf py-spy pyext pre-commit ruff packaging
+  wandb "liger-kernel==0.5.8"
 
 echo "==> Install Open-dLLM editable + its eval harnesses"
 cd "$ROOT/Open-dLLM"
