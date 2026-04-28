@@ -27,6 +27,18 @@ echo "==> Install human-eval-infilling (no build isolation so pkg_resources work
 pip install --no-build-isolation -e "$HEI_DIR"
 which evaluate_infilling_functional_correctness
 
+echo "==> Fetch missing HumanEval-Infill benchmark data files"
+DATA_DIR="$HEI_DIR/data"
+mkdir -p "$DATA_DIR"
+for f in HumanEval-SingleLineInfilling HumanEval-MultiLineInfilling HumanEval-RandomSpanInfilling HumanEval-RandomSpanInfillingLight; do
+  if [ ! -s "$DATA_DIR/$f.jsonl.gz" ]; then
+    echo "    downloading $f.jsonl.gz"
+    curl -fsSL -o "$DATA_DIR/$f.jsonl.gz" \
+      "https://raw.githubusercontent.com/openai/human-eval-infilling/main/data/$f.jsonl.gz"
+  fi
+done
+ls -la "$DATA_DIR"
+
 MODEL_PATH=${MODEL_PATH:-fredzzp/open-dcoder-0.5B}
 TEMPERATURE=${TEMPERATURE:-0.6}
 STEPS=${STEPS:-64}
